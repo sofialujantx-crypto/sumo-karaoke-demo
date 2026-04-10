@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Room | Sumo Karaoke - Cypress, TX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --neon-pink: #ff2d78;
+            --neon-blue: #00d4ff;
+            --neon-purple: #b44dff;
+            --dark-bg: #0a0a14;
+            --card-bg: #12121f;
+            --input-bg: #1a1a2e;
+            --text: #f0f0f5;
+            --text-muted: #9999aa;
+            --gold: #ffd700;
+            --success: #00c853;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* NAV */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            background: rgba(10,10,20,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 0 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+            height: 70px;
+        }
+        .logo {
+            font-size: 1.5rem; font-weight: 800;
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: 1px; text-decoration: none;
+        }
+        .logo span { font-weight: 400; font-size: 0.85rem; opacity: 0.7; -webkit-text-fill-color: var(--text-muted); display: block; letter-spacing: 2px; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+        .nav-links a {
+            color: var(--text-muted); text-decoration: none; font-size: 0.9rem;
+            font-weight: 500; transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--neon-pink); }
+        .nav-cta {
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+            color: #fff !important; padding: 0.5rem 1.5rem; border-radius: 50px;
+            font-weight: 600; font-size: 0.85rem;
+        }
+        .mobile-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+
+        /* PAGE HEADER */
+        .page-header {
+            padding: 8rem 2rem 3rem; text-align: center;
+            background: radial-gradient(ellipse at 30% 50%, rgba(180,77,255,0.1) 0%, transparent 60%),
+                        radial-gradient(ellipse at 70% 50%, rgba(255,45,120,0.08) 0%, transparent 60%),
+                        var(--dark-bg);
+        }
+        .page-header h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; margin-bottom: 0.5rem;
+        }
+        .page-header p { color: var(--text-muted); font-size: 1.05rem; max-width: 500px; margin: 0 auto; }
+
+        /* BOOKING LAYOUT */
+        .booking-layout {
+            max-width: 1100px; margin: 0 auto; padding: 3rem 2rem 6rem;
+            display: grid; grid-template-columns: 1fr 380px; gap: 3rem;
+        }
+
+        /* FORM */
+        .form-section { }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label {
+            display: block; font-size: 0.8rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--text-muted); margin-bottom: 0.5rem;
+        }
+        .form-group label .required { color: var(--neon-pink); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        input, select, textarea {
+            width: 100%; padding: 0.85rem 1rem; border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: var(--input-bg); color: var(--text);
+            font-family: 'Poppins', sans-serif; font-size: 0.92rem;
+            transition: border-color 0.3s;
+            -webkit-appearance: none;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none; border-color: var(--neon-pink);
+        }
+        select { cursor: pointer; }
+        select option { background: var(--input-bg); color: var(--text); }
+        textarea { resize: vertical; min-height: 100px; }
+
+        /* ROOM SELECTOR */
+        .room-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+        .room-option {
+            background: var(--input-bg); border: 2px solid rgba(255,255,255,0.08);
+            border-radius: 12px; padding: 1rem; cursor: pointer;
+            transition: all 0.3s; position: relative;
+        }
+        .room-option:hover { border-color: rgba(255,255,255,0.15); }
+        .room-option.selected { border-color: var(--neon-pink); background: rgba(255,45,120,0.05); }
+        .room-option.selected::after {
+            content: '\2713'; position: absolute; top: 0.6rem; right: 0.8rem;
+            color: var(--neon-pink); font-weight: 700; font-size: 0.9rem;
+        }
+        .room-option input { display: none; }
+        .room-option .room-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.2rem; }
+        .room-option .room-detail { font-size: 0.75rem; color: var(--text-muted); }
+        .room-option .room-price-tag {
+            font-size: 0.8rem; font-weight: 700; color: var(--neon-blue); margin-top: 0.4rem;
+        }
+        .room-option.vip-option.selected { border-color: var(--gold); }
+        .room-option.vip-option .room-price-tag { color: var(--gold); }
+        .room-option .vip-label {
+            display: inline-block; background: var(--gold); color: #000;
+            font-size: 0.55rem; font-weight: 700; padding: 0.1rem 0.4rem;
+            border-radius: 50px; text-transform: uppercase; letter-spacing: 1px;
+            margin-left: 0.3rem; vertical-align: middle;
+        }
+
+        /* TIME SLOTS */
+        .time-slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+        .time-slot {
+            background: var(--input-bg); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px; padding: 0.6rem; text-align: center;
+            cursor: pointer; transition: all 0.3s; font-size: 0.82rem;
+        }
+        .time-slot:hover { border-color: rgba(255,255,255,0.15); }
+        .time-slot.selected { border-color: var(--neon-pink); background: rgba(255,45,120,0.05); color: var(--neon-pink); font-weight: 600; }
+        .time-slot input { display: none; }
+        .time-note-label {
+            font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem; font-style: italic;
+        }
+
+        /* OCCASION TAGS */
+        .occasion-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .occasion-tag {
+            background: var(--input-bg); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 50px; padding: 0.4rem 1rem; cursor: pointer;
+            font-size: 0.8rem; color: var(--text-muted); transition: all 0.3s;
+        }
+        .occasion-tag:hover { border-color: rgba(255,255,255,0.15); }
+        .occasion-tag.selected { border-color: var(--neon-purple); background: rgba(180,77,255,0.08); color: var(--neon-purple); }
+        .occasion-tag input { display: none; }
+
+        /* SUBMIT */
+        .submit-btn {
+            width: 100%; padding: 1rem; border: none; border-radius: 12px;
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+            color: #fff; font-family: 'Poppins', sans-serif;
+            font-size: 1rem; font-weight: 700; cursor: pointer;
+            transition: all 0.3s; margin-top: 1rem;
+            box-shadow: 0 4px 25px rgba(255,45,120,0.3);
+        }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 35px rgba(255,45,120,0.4); }
+
+        .form-disclaimer {
+            font-size: 0.72rem; color: var(--text-muted); margin-top: 1rem;
+            line-height: 1.5; text-align: center;
+        }
+
+        /* SIDEBAR SUMMARY */
+        .summary-card {
+            background: var(--card-bg); border-radius: 20px; padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: sticky; top: 90px;
+        }
+        .summary-card h3 {
+            font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem;
+            padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .summary-row {
+            display: flex; justify-content: space-between; padding: 0.5rem 0;
+            font-size: 0.88rem;
+        }
+        .summary-row .label { color: var(--text-muted); }
+        .summary-row .value { font-weight: 600; }
+        .summary-divider {
+            border: none; border-top: 1px solid rgba(255,255,255,0.05);
+            margin: 1rem 0;
+        }
+        .summary-total {
+            display: flex; justify-content: space-between; padding: 0.5rem 0;
+            font-size: 1.1rem; font-weight: 800;
+        }
+        .summary-total .total-amount { color: var(--neon-pink); }
+        .summary-note {
+            font-size: 0.72rem; color: var(--text-muted); margin-top: 0.5rem;
+            line-height: 1.5;
+        }
+        .summary-empty {
+            text-align: center; padding: 2rem 0; color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* INFO BOXES */
+        .info-box {
+            background: rgba(0,212,255,0.05); border: 1px solid rgba(0,212,255,0.15);
+            border-radius: 12px; padding: 1rem 1.2rem; margin-top: 1.5rem;
+        }
+        .info-box h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.3rem; color: var(--neon-blue); }
+        .info-box p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+
+        .contact-box {
+            background: rgba(180,77,255,0.05); border: 1px solid rgba(180,77,255,0.15);
+            border-radius: 12px; padding: 1rem 1.2rem; margin-top: 1rem;
+        }
+        .contact-box h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.3rem; color: var(--neon-purple); }
+        .contact-box p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+        .contact-box a { color: var(--neon-purple); text-decoration: none; font-weight: 600; }
+
+        /* SUCCESS MESSAGE */
+        .success-overlay {
+            display: none; position: fixed; inset: 0; z-index: 200;
+            background: rgba(10,10,20,0.95); backdrop-filter: blur(20px);
+            align-items: center; justify-content: center;
+        }
+        .success-overlay.show { display: flex; }
+        .success-content {
+            text-align: center; max-width: 450px; padding: 3rem;
+            background: var(--card-bg); border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .success-check {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: rgba(0,200,83,0.1); border: 2px solid var(--success);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.5rem; font-size: 1.5rem; color: var(--success); font-weight: 700;
+        }
+        .success-content h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+        .success-content p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; }
+        .success-btn {
+            display: inline-block; padding: 0.7rem 2rem; border-radius: 50px;
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+            color: #fff; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            cursor: pointer; border: none; font-family: 'Poppins', sans-serif;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center; padding: 3rem 2rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .footer-logo { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        footer p { color: var(--text-muted); font-size: 0.8rem; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .mobile-toggle { display: block; }
+            .booking-layout { grid-template-columns: 1fr; }
+            .summary-card { position: static; }
+            .form-row { grid-template-columns: 1fr; }
+            .room-options { grid-template-columns: 1fr; }
+            .time-slots { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <a href="index.html" class="logo">SUMO KARAOKE <span>Cypress, TX</span></a>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#rooms">Rooms</a></li>
+        <li><a href="index.html#hours">Hours</a></li>
+        <li><a href="booking.html" class="nav-cta">Book Now</a></li>
+    </ul>
+    <button class="mobile-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">&#9776;</button>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <h1>Book Your Room</h1>
+    <p>Reserve your private karaoke room in just a few clicks. We'll confirm your booking within the hour.</p>
+</div>
+
+<!-- BOOKING FORM -->
+<div class="booking-layout">
+    <div class="form-section">
+        <form id="bookingForm" onsubmit="handleSubmit(event)">
+
+            <!-- ROOM SELECTION -->
+            <div class="form-group">
+                <label>Select a Room <span class="required">*</span></label>
+                <div class="room-options">
+                    <label class="room-option" onclick="selectRoom(this, 'small1', 100, 150)">
+                        <input type="radio" name="room" value="small1" required>
+                        <div class="room-name">Small Room 1</div>
+                        <div class="room-detail">Up to 8 guests</div>
+                        <div class="room-price-tag">From $100/hr</div>
+                    </label>
+                    <label class="room-option" onclick="selectRoom(this, 'small2', 100, 150)">
+                        <input type="radio" name="room" value="small2">
+                        <div class="room-name">Small Room 2</div>
+                        <div class="room-detail">Up to 8 guests</div>
+                        <div class="room-price-tag">From $100/hr</div>
+                    </label>
+                    <label class="room-option" onclick="selectRoom(this, 'medium', 150, 200)">
+                        <input type="radio" name="room" value="medium">
+                        <div class="room-name">Medium Room</div>
+                        <div class="room-detail">Up to 15 guests</div>
+                        <div class="room-price-tag">From $150/hr</div>
+                    </label>
+                    <label class="room-option vip-option" onclick="selectRoom(this, 'vip', 500, 500)">
+                        <input type="radio" name="room" value="vip">
+                        <div class="room-name">VIP Large <span class="vip-label">VIP</span></div>
+                        <div class="room-detail">Up to 25 guests</div>
+                        <div class="room-price-tag">$500/hr</div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- DATE & GUESTS -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Date <span class="required">*</span></label>
+                    <input type="date" id="bookingDate" required onchange="updateSummary()">
+                </div>
+                <div class="form-group">
+                    <label>Number of Guests <span class="required">*</span></label>
+                    <select id="guestCount" required onchange="updateSummary()">
+                        <option value="">Select</option>
+                        <option value="2">2 guests</option>
+                        <option value="3">3 guests</option>
+                        <option value="4">4 guests</option>
+                        <option value="5">5 guests</option>
+                        <option value="6">6 guests</option>
+                        <option value="7">7 guests</option>
+                        <option value="8">8 guests</option>
+                        <option value="10">10 guests</option>
+                        <option value="12">12 guests</option>
+                        <option value="15">15 guests</option>
+                        <option value="20">20 guests</option>
+                        <option value="25">25 guests</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- TIME -->
+            <div class="form-group">
+                <label>Preferred Time <span class="required">*</span></label>
+                <div class="time-slots">
+                    <label class="time-slot" onclick="selectTime(this, '12:00 PM')">
+                        <input type="radio" name="time" value="12:00 PM" required>
+                        12:00 PM
+                    </label>
+                    <label class="time-slot" onclick="selectTime(this, '1:00 PM')">
+                        <input type="radio" name="time" value="1:00 PM">
+                        1:00 PM
+                    </label>
+                    <label class="time-slot" onclick="selectTime(this, '2:00 PM')">
+                        <input type="radio" name="time" value="2:00 PM">
+                        2:00 PM
+                    </label>
+                    <label class="time-slot" onclick="selectTime(this, '3:00 PM')">
+                        <input type="radio" name="time" value="3:00 PM">
+                        3:00 PM
+                    </label>
+                    <label class="time-slot" onclick="selectTime(this, '4:00 PM')">
+                        <input type="radio" name="time" value="4:00 PM">
+                        4:00 PM
+                    </label>
+                    <label class="time-slot" onclick="selectTime(this, '5:00 PM')">
+                        <input type="radio" name="time" value="5:00 PM">
+                        5:00 PM
+                    </label>
+                    <label class="time-slot" onclick="selectTime(this, '6:00 PM')">
+                        <input type="radio" name="time" value="6:00 PM">
+                        6:00 PM
+                    </label>
+                    <label class="time-slot" onclick="selectTime(this, '7:00 PM')">
+                        <input type="radio" name="time" value="7:00 PM">
+                        7:00 PM
+                    </label>
+                    <label class="time-slot" onclick="selectTime(this, '8:00 PM')">
+                        <input type="radio" name="time" value="8:00 PM">
+                        8:00 PM
+                    </label>
+                    <label class="time-slot" onclick="selectTime(this, '9:00 PM')">
+                        <input type="radio" name="time" value="9:00 PM">
+                        9:00 PM
+                    </label>
+                    <label class="time-slot" onclick="selectTime(this, '10:00 PM')">
+                        <input type="radio" name="time" value="10:00 PM">
+                        10:00 PM
+                    </label>
+                    <label class="time-slot" onclick="selectTime(this, '11:00 PM')">
+                        <input type="radio" name="time" value="11:00 PM">
+                        11:00 PM
+                    </label>
+                </div>
+                <div class="time-note-label">Happy Hour rates apply 11 AM - 8 PM</div>
+            </div>
+
+            <!-- DURATION -->
+            <div class="form-group">
+                <label>Duration <span class="required">*</span></label>
+                <select id="duration" required onchange="updateSummary()">
+                    <option value="">Select duration</option>
+                    <option value="2" selected>2 hours (minimum)</option>
+                    <option value="3">3 hours</option>
+                    <option value="4">4 hours</option>
+                    <option value="5">5 hours</option>
+                    <option value="6">6 hours</option>
+                </select>
+            </div>
+
+            <!-- OCCASION -->
+            <div class="form-group">
+                <label>What's the Occasion?</label>
+                <div class="occasion-tags">
+                    <label class="occasion-tag" onclick="selectOccasion(this)">
+                        <input type="radio" name="occasion" value="Just for fun">Just for Fun
+                    </label>
+                    <label class="occasion-tag" onclick="selectOccasion(this)">
+                        <input type="radio" name="occasion" value="Birthday">Birthday
+                    </label>
+                    <label class="occasion-tag" onclick="selectOccasion(this)">
+                        <input type="radio" name="occasion" value="Date Night">Date Night
+                    </label>
+                    <label class="occasion-tag" onclick="selectOccasion(this)">
+                        <input type="radio" name="occasion" value="Bachelorette">Bachelorette
+                    </label>
+                    <label class="occasion-tag" onclick="selectOccasion(this)">
+                        <input type="radio" name="occasion" value="Corporate Event">Corporate Event
+                    </label>
+                    <label class="occasion-tag" onclick="selectOccasion(this)">
+                        <input type="radio" name="occasion" value="Other">Other
+                    </label>
+                </div>
+            </div>
+
+            <!-- CONTACT INFO -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Full Name <span class="required">*</span></label>
+                    <input type="text" placeholder="Your name" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number <span class="required">*</span></label>
+                    <input type="tel" placeholder="(281) 000-0000" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" placeholder="your@email.com">
+            </div>
+
+            <div class="form-group">
+                <label>Special Requests</label>
+                <textarea placeholder="Decorations, cake, specific songs, etc."></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Request Reservation</button>
+            <p class="form-disclaimer">
+                This is a reservation request, not a confirmed booking. Our team will reach out within 1 hour to confirm availability and finalize your reservation. 20% gratuity will be added to your total.
+            </p>
+        </form>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div>
+        <div class="summary-card">
+            <h3>Booking Summary</h3>
+            <div id="summaryContent">
+                <div class="summary-empty">Select a room and time to see your estimate</div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h4>BYOB Policy</h4>
+            <p>Bring your own drinks! Corkage fees: Beer $1/bottle, Wine $20/bottle, Liquor starting at $50. No outside food restrictions.</p>
+        </div>
+
+        <div class="contact-box">
+            <h4>Prefer to Call?</h4>
+            <p>Call us directly at <a href="tel:+12810000000">(281) 000-0000</a> for immediate booking or questions about availability.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-overlay" id="successOverlay">
+    <div class="success-content">
+        <div class="success-check">&check;</div>
+        <h2>Reservation Requested</h2>
+        <p>Thank you for choosing Sumo Karaoke! We've received your reservation request and will contact you within 1 hour to confirm.</p>
+        <button class="success-btn" onclick="closeSuccess()">Back to Home</button>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-logo">SUMO KARAOKE</div>
+    <p>&copy; 2026 Sumo Karaoke. All rights reserved. | Cypress, TX</p>
+</footer>
+
+<script>
+// State
+let selectedRoom = null;
+let happyRate = 0;
+let nightRate = 0;
+let selectedTime = '';
+
+// Room names map
+const roomNames = {
+    small1: 'Small Room 1',
+    small2: 'Small Room 2',
+    medium: 'Medium Room',
+    vip: 'VIP Large'
+};
+
+// Set min date to today
+document.getElementById('bookingDate').min = new Date().toISOString().split('T')[0];
+
+function selectRoom(el, room, happy, night) {
+    document.querySelectorAll('.room-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedRoom = room;
+    happyRate = happy;
+    nightRate = night;
+    updateSummary();
+}
+
+function selectTime(el, time) {
+    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedTime = time;
+    updateSummary();
+}
+
+function selectOccasion(el) {
+    document.querySelectorAll('.occasion-tag').forEach(t => t.classList.remove('selected'));
+    el.classList.add('selected');
+}
+
+function isHappyHour(time) {
+    if (!time) return true;
+    const hour = parseInt(time.split(':')[0]);
+    const isPM = time.includes('PM');
+    let h24 = hour;
+    if (isPM && hour !== 12) h24 = hour + 12;
+    if (!isPM && hour === 12) h24 = 0;
+    return h24 < 21; // before 9 PM
+}
+
+function updateSummary() {
+    const content = document.getElementById('summaryContent');
+    const duration = document.getElementById('duration').value;
+    const guests = document.getElementById('guestCount').value;
+    const date = document.getElementById('bookingDate').value;
+
+    if (!selectedRoom) {
+        content.innerHTML = '<div class="summary-empty">Select a room and time to see your estimate</div>';
+        return;
+    }
+
+    const happy = isHappyHour(selectedTime);
+    const rate = happy ? happyRate : nightRate;
+    const hours = parseInt(duration) || 2;
+    const subtotal = rate * hours;
+    const gratuity = subtotal * 0.20;
+    const total = subtotal + gratuity;
+
+    const rateLabel = happy ? 'Happy Hour' : 'After 9 PM';
+
+    let html = '';
+    html += `<div class="summary-row"><span class="label">Room</span><span class="value">${roomNames[selectedRoom]}</span></div>`;
+    if (date) html += `<div class="summary-row"><span class="label">Date</span><span class="value">${new Date(date + 'T12:00').toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric'})}</span></div>`;
+    if (selectedTime) html += `<div class="summary-row"><span class="label">Time</span><span class="value">${selectedTime}</span></div>`;
+    if (guests) html += `<div class="summary-row"><span class="label">Guests</span><span class="value">${guests}</span></div>`;
+    html += `<div class="summary-row"><span class="label">Duration</span><span class="value">${hours} hours</span></div>`;
+    html += `<div class="summary-row"><span class="label">Rate (${rateLabel})</span><span class="value">$${rate}/hr</span></div>`;
+    html += '<hr class="summary-divider">';
+    html += `<div class="summary-row"><span class="label">Subtotal</span><span class="value">$${subtotal.toLocaleString()}</span></div>`;
+    html += `<div class="summary-row"><span class="label">Gratuity (20%)</span><span class="value">$${gratuity.toLocaleString()}</span></div>`;
+    html += '<hr class="summary-divider">';
+    html += `<div class="summary-total"><span>Estimated Total</span><span class="total-amount">$${total.toLocaleString()}</span></div>`;
+    html += '<p class="summary-note">Final total will be confirmed by our team. BYOB corkage fees are additional.</p>';
+
+    content.innerHTML = html;
+}
+
+function handleSubmit(e) {
+    e.preventDefault();
+    document.getElementById('successOverlay').classList.add('show');
+}
+
+function closeSuccess() {
+    document.getElementById('successOverlay').classList.remove('show');
+    window.location.href = 'index.html';
+}
+</script>
+</body>
+</html>

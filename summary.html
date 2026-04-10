@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Summary</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0a0a14;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 2rem;
+        }
+        .card {
+            background: linear-gradient(135deg, #12121f, #1a1a2e);
+            border-radius: 24px; padding: 2.5rem;
+            max-width: 500px; width: 100%;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center; margin-bottom: 2rem;
+            padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .date {
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px;
+            color: #9999aa; margin-bottom: 0.5rem;
+        }
+        .title {
+            font-size: 1.6rem; font-weight: 800; color: #f0f0f5;
+            margin-bottom: 0.3rem;
+        }
+        .subtitle {
+            font-size: 0.85rem; color: #ff2d78; font-weight: 600;
+        }
+
+        /* CLIENT */
+        .client-box {
+            background: rgba(255,255,255,0.03); border-radius: 14px;
+            padding: 1.2rem; margin-bottom: 1.5rem; text-align: center;
+        }
+        .client-label {
+            font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px;
+            color: #9999aa; margin-bottom: 0.3rem;
+        }
+        .client-name {
+            font-size: 1.3rem; font-weight: 800; color: #f0f0f5;
+        }
+        .client-location {
+            font-size: 0.8rem; color: #9999aa;
+        }
+
+        /* WHAT I BUILT */
+        .section-label {
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px;
+            color: #ff2d78; font-weight: 600; margin-bottom: 0.8rem;
+        }
+        .deliverables {
+            display: flex; flex-direction: column; gap: 0.6rem;
+            margin-bottom: 1.5rem;
+        }
+        .item {
+            display: flex; align-items: flex-start; gap: 0.8rem;
+            background: rgba(255,255,255,0.03); border-radius: 10px;
+            padding: 0.8rem 1rem;
+        }
+        .item-num {
+            width: 28px; height: 28px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
+        }
+        .num-1 { background: rgba(255,45,120,0.15); color: #ff2d78; }
+        .num-2 { background: rgba(0,212,255,0.15); color: #00d4ff; }
+        .item-text h4 { font-size: 0.88rem; font-weight: 700; color: #f0f0f5; }
+        .item-text p { font-size: 0.72rem; color: #9999aa; line-height: 1.5; margin-top: 0.15rem; }
+
+        /* PRICING */
+        .pricing-box {
+            background: rgba(255,45,120,0.06); border: 1px solid rgba(255,45,120,0.15);
+            border-radius: 14px; padding: 1.2rem; margin-bottom: 1.5rem;
+        }
+        .pricing-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.4rem 0;
+        }
+        .pricing-row .label { font-size: 0.82rem; color: #9999aa; }
+        .pricing-row .value { font-size: 1rem; font-weight: 800; color: #ff2d78; }
+        .pricing-row .value.blue { color: #00d4ff; }
+        .pricing-divider {
+            border: none; border-top: 1px solid rgba(255,255,255,0.06);
+            margin: 0.5rem 0;
+        }
+
+        /* STATUS */
+        .status {
+            text-align: center; padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .status-badge {
+            display: inline-block; padding: 0.4rem 1.2rem; border-radius: 50px;
+            background: rgba(0,200,83,0.1); border: 1px solid rgba(0,200,83,0.25);
+            font-size: 0.75rem; font-weight: 600; color: #00c853;
+            text-transform: uppercase; letter-spacing: 1.5px;
+        }
+        .next-step {
+            font-size: 0.78rem; color: #9999aa; margin-top: 0.8rem; line-height: 1.5;
+        }
+
+        /* WATERMARK */
+        .watermark {
+            text-align: center; margin-top: 1.5rem;
+            font-size: 0.6rem; color: rgba(255,255,255,0.1);
+            letter-spacing: 2px; text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <div class="date">April 10, 2026</div>
+        <div class="title">Today's Progress</div>
+        <div class="subtitle">Web Design Project</div>
+    </div>
+
+    <div class="client-box">
+        <div class="client-label">Client</div>
+        <div class="client-name">Sumo Karaoke</div>
+        <div class="client-location">Cypress, Houston TX</div>
+    </div>
+
+    <div class="section-label">What I Built</div>
+    <div class="deliverables">
+        <div class="item">
+            <div class="item-num num-1">01</div>
+            <div class="item-text">
+                <h4>Full Homepage</h4>
+                <p>4 rooms with real pricing, BYOB prices, why us section, hours, location, and navigation bar</p>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-num num-2">02</div>
+            <div class="item-text">
+                <h4>Online Booking Page</h4>
+                <p>Room selector, date/time picker, live price calculator with gratuity, and confirmation screen</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-label">Proposed Pricing</div>
+    <div class="pricing-box">
+        <div class="pricing-row">
+            <span class="label">Website Build</span>
+            <span class="value">$1,200</span>
+        </div>
+        <hr class="pricing-divider">
+        <div class="pricing-row">
+            <span class="label">Monthly Maintenance</span>
+            <span class="value blue">$75/mo</span>
+        </div>
+    </div>
+
+    <div class="status">
+        <div class="status-badge">Demo Ready</div>
+        <p class="next-step">Next step: Reach out to the business and show them the demo</p>
+    </div>
+
+    <div class="watermark">Sofia Lujan</div>
+</div>
+
+</body>
+</html>
