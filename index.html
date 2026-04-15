@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sumo Karaoke | Cypress, TX - Private Karaoke Rooms</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
         :root {
             --neon-pink: #ff2d78;
             --neon-blue: #00d4ff;
@@ -19,384 +17,373 @@
             --text-muted: #9999aa;
             --gold: #ffd700;
         }
-
-        html { scroll-behavior: smooth; }
-
         body {
             font-family: 'Poppins', sans-serif;
             background: var(--dark-bg);
             color: var(--text);
-            overflow-x: hidden;
+            height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column;
         }
 
         /* NAV */
-        nav {
-            position: fixed; top: 0; width: 100%; z-index: 100;
-            background: rgba(10,10,20,0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding: 0 2rem;
+        .nav {
             display: flex; justify-content: space-between; align-items: center;
-            height: 70px;
+            padding: 0 2rem; height: 55px; flex-shrink: 0;
+            background: rgba(10,10,20,0.95);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .logo {
-            font-size: 1.5rem; font-weight: 800;
+            font-size: 1.2rem; font-weight: 800;
             background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            letter-spacing: 1px;
         }
-        .logo span { font-weight: 400; font-size: 0.85rem; opacity: 0.7; -webkit-text-fill-color: var(--text-muted); display: block; letter-spacing: 2px; }
-        .nav-links { display: flex; gap: 2rem; list-style: none; }
-        .nav-links a {
-            color: var(--text-muted); text-decoration: none; font-size: 0.9rem;
-            font-weight: 500; transition: color 0.3s;
-        }
-        .nav-links a:hover { color: var(--neon-pink); }
-        .nav-cta {
+        .logo span { font-weight: 400; font-size: 0.7rem; -webkit-text-fill-color: var(--text-muted); margin-left: 0.5rem; letter-spacing: 2px; }
+        .book-btn {
             background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
-            color: #fff !important; padding: 0.5rem 1.5rem; border-radius: 50px;
-            font-weight: 600; font-size: 0.85rem;
+            color: #fff; padding: 0.4rem 1.2rem; border-radius: 50px;
+            font-weight: 600; font-size: 0.78rem; text-decoration: none;
         }
-        .nav-cta:hover { opacity: 0.9; }
-        .mobile-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
 
-        /* SECTION BAR */
-        .section-bar {
-            position: fixed; top: 70px; width: 100%; z-index: 99;
-            background: rgba(18,18,31,0.95);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+        /* TABS */
+        .tabs {
             display: flex; justify-content: center; gap: 0;
-            padding: 0;
+            background: rgba(18,18,31,0.95);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            flex-shrink: 0;
         }
-        .section-bar a {
-            color: var(--text-muted); text-decoration: none;
-            font-size: 0.78rem; font-weight: 600; text-transform: uppercase;
-            letter-spacing: 1.5px; padding: 0.7rem 1.3rem;
-            transition: all 0.3s; position: relative;
+        .tab {
+            color: var(--text-muted); background: none; border: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1.5px; padding: 0.6rem 1.3rem;
+            cursor: pointer; transition: all 0.3s; position: relative;
         }
-        .section-bar a::after {
+        .tab::after {
             content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px;
             background: var(--neon-pink); transition: all 0.3s; transform: translateX(-50%);
         }
-        .section-bar a:hover { color: var(--neon-pink); }
-        .section-bar a:hover::after, .section-bar a.active::after { width: 60%; }
-        .section-bar a.active { color: var(--neon-pink); }
+        .tab:hover { color: var(--neon-pink); }
+        .tab.active { color: var(--neon-pink); }
+        .tab.active::after { width: 60%; }
 
-        /* HERO */
-        .hero {
-            min-height: 100vh; display: flex; align-items: center; justify-content: center;
-            text-align: center; padding: 8rem 2rem 4rem;
-            position: relative; overflow: hidden;
-            background: radial-gradient(ellipse at 30% 50%, rgba(180,77,255,0.15) 0%, transparent 60%),
-                        radial-gradient(ellipse at 70% 50%, rgba(255,45,120,0.12) 0%, transparent 60%),
-                        var(--dark-bg);
+        /* CONTENT AREA */
+        .content { flex: 1; overflow: hidden; position: relative; }
+        .panel {
+            position: absolute; inset: 0;
+            overflow-y: auto; padding: 1.5rem 2rem;
+            background: var(--dark-bg);
+            visibility: hidden; opacity: 0;
         }
-        .hero::before {
-            content: ''; position: absolute; inset: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        .panel.active { visibility: visible; opacity: 1; }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* HOME PANEL */
+        .home-panel {
+            align-items: center; justify-content: center;
+            text-align: center; height: 100%;
+            background: radial-gradient(ellipse at 30% 50%, rgba(180,77,255,0.12) 0%, transparent 60%),
+                        radial-gradient(ellipse at 70% 50%, rgba(255,45,120,0.08) 0%, transparent 60%);
         }
-        .hero-content { position: relative; z-index: 2; max-width: 800px; }
+        .home-panel.active { display: flex; }
+        .home-content { max-width: 700px; }
         .hero-badge {
-            display: inline-block; padding: 0.4rem 1.2rem; border-radius: 50px;
+            display: inline-block; padding: 0.3rem 1rem; border-radius: 50px;
             border: 1px solid rgba(255,45,120,0.3); background: rgba(255,45,120,0.08);
-            font-size: 0.8rem; color: var(--neon-pink); font-weight: 500;
-            margin-bottom: 1.5rem; letter-spacing: 1px; text-transform: uppercase;
+            font-size: 0.7rem; color: var(--neon-pink); font-weight: 500;
+            margin-bottom: 1rem; letter-spacing: 1px; text-transform: uppercase;
         }
-        .hero h1 {
-            font-size: clamp(2.5rem, 7vw, 5rem); font-weight: 900;
-            line-height: 1.1; margin-bottom: 1.5rem;
+        .home-content h1 {
+            font-size: clamp(1.8rem, 5vw, 3.5rem); font-weight: 900; line-height: 1.1; margin-bottom: 1rem;
         }
-        .hero h1 .gradient {
+        .home-content h1 .gradient {
             background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        .hero p { font-size: 1.15rem; color: var(--text-muted); max-width: 550px; margin: 0 auto 2.5rem; line-height: 1.7; }
-        .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .home-content p { font-size: 1rem; color: var(--text-muted); max-width: 500px; margin: 0 auto 1.5rem; line-height: 1.6; }
+        .home-buttons { display: flex; gap: 0.8rem; justify-content: center; }
         .btn {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.9rem 2rem; border-radius: 50px; font-weight: 600;
-            font-size: 1rem; text-decoration: none; transition: all 0.3s; border: none; cursor: pointer;
+            padding: 0.7rem 1.5rem; border-radius: 50px; font-weight: 600;
+            font-size: 0.88rem; text-decoration: none; border: none; cursor: pointer;
+            font-family: 'Poppins', sans-serif;
         }
         .btn-primary {
             background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
-            color: #fff; box-shadow: 0 4px 25px rgba(255,45,120,0.3);
+            color: #fff; box-shadow: 0 4px 20px rgba(255,45,120,0.3);
         }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 35px rgba(255,45,120,0.4); }
         .btn-outline {
             background: transparent; color: var(--text);
             border: 2px solid rgba(255,255,255,0.15);
         }
-        .btn-outline:hover { border-color: var(--neon-blue); color: var(--neon-blue); }
 
-        /* SECTIONS */
-        section { padding: 6rem 2rem; }
-        .section-header { text-align: center; margin-bottom: 4rem; }
-        .section-header .tag {
-            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 3px;
-            color: var(--neon-pink); font-weight: 600; margin-bottom: 0.8rem;
-        }
-        .section-header h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; }
-        .section-header p { color: var(--text-muted); max-width: 550px; margin: 1rem auto 0; line-height: 1.7; }
-        .container { max-width: 1200px; margin: 0 auto; }
-
-        /* ROOMS */
-        .rooms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+        /* ROOMS PANEL */
+        .rooms-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1rem; }
         .room-card {
-            background: var(--card-bg); border-radius: 20px; overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
+            background: var(--card-bg); border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.05); padding: 1.2rem;
         }
-        .room-card:hover { transform: translateY(-5px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
-        .room-img {
-            height: 200px; position: relative; overflow: hidden;
+        .room-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.15rem; }
+        .room-card .capacity { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.6rem; }
+        .room-features { list-style: none; margin-bottom: 0.8rem; }
+        .room-features li {
+            font-size: 0.75rem; color: var(--text-muted); padding: 0.15rem 0;
+            display: flex; align-items: center; gap: 0.4rem;
         }
-        .room-img-small { background: linear-gradient(135deg, #1a1a3e, #2d1b4e); }
-        .room-img-medium { background: linear-gradient(135deg, #1b2d4e, #1a3e3e); }
-        .room-img-vip { background: linear-gradient(135deg, #3e1a2d, #4e2d1b); }
-        .room-img .room-label {
-            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; font-weight: 700; opacity: 0.15; text-transform: uppercase;
-            letter-spacing: 6px;
-        }
+        .room-features li::before { content: '\2713'; color: var(--neon-blue); font-weight: 700; font-size: 0.65rem; }
+        .room-pricing { padding-top: 0.6rem; border-top: 1px solid rgba(255,255,255,0.05); }
+        .price-row { display: flex; justify-content: space-between; align-items: center; padding: 0.2rem 0; }
+        .price-label { font-size: 0.7rem; color: var(--text-muted); }
+        .price-label .time-note { display: block; font-size: 0.6rem; opacity: 0.7; }
+        .price-amount { font-size: 0.95rem; font-weight: 800; color: var(--neon-pink); }
+        .price-amount.highlight { color: var(--neon-blue); }
         .room-badge {
-            position: absolute; top: 1rem; right: 1rem;
-            padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.7rem;
-            font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+            display: inline-block; padding: 0.15rem 0.5rem; border-radius: 50px;
+            font-size: 0.55rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; margin-left: 0.4rem; vertical-align: middle;
         }
         .badge-popular { background: var(--neon-pink); color: #fff; }
         .badge-vip { background: var(--gold); color: #000; }
-        .room-info { padding: 1.5rem; }
-        .room-info h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.3rem; }
-        .room-info .capacity { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem; }
-        .room-features { list-style: none; margin-bottom: 1.5rem; }
-        .room-features li {
-            padding: 0.35rem 0; font-size: 0.88rem; color: var(--text-muted);
-            display: flex; align-items: center; gap: 0.5rem;
-        }
-        .room-features li::before { content: '\2713'; color: var(--neon-blue); font-weight: 700; }
-        .room-pricing {
-            padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05);
-        }
-        .price-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0.4rem 0;
-        }
-        .price-label { font-size: 0.8rem; color: var(--text-muted); }
-        .price-label .time-note { display: block; font-size: 0.7rem; opacity: 0.7; }
-        .price-amount { font-size: 1.1rem; font-weight: 800; color: var(--neon-pink); }
-        .price-amount.highlight { color: var(--neon-blue); }
-        .pricing-notes {
-            text-align: center; margin-top: 2rem;
-            display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;
+
+        /* NOTES ROW */
+        .notes-row {
+            display: flex; gap: 1rem; justify-content: center; align-items: center;
+            flex-wrap: wrap; margin-bottom: 1rem;
         }
         .pricing-note {
-            display: inline-block; padding: 0.4rem 1rem; border-radius: 50px;
+            display: inline-block; padding: 0.3rem 0.8rem; border-radius: 50px;
             background: rgba(255,45,120,0.08); border: 1px solid rgba(255,45,120,0.2);
-            font-size: 0.8rem; color: var(--neon-pink); font-weight: 500;
+            font-size: 0.7rem; color: var(--neon-pink); font-weight: 500;
         }
 
-        /* BYOB SECTION */
-        .byob-banner {
-            background: var(--card-bg); border-radius: 16px; padding: 2rem;
-            border: 1px solid rgba(255,255,255,0.05); margin-top: 2.5rem; text-align: center;
+        /* BYOB ROW */
+        .byob-row {
+            display: flex; align-items: center; gap: 1.5rem;
+            background: var(--card-bg); border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 0.8rem 1.5rem;
         }
-        .byob-banner h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.3rem; }
-        .byob-banner .subtitle { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.2rem; }
-        .byob-grid { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
-        .byob-item {
-            background: rgba(255,255,255,0.03); padding: 0.8rem 1.2rem; border-radius: 12px;
-            text-align: center; min-width: 120px;
-        }
-        .byob-item .drink { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.2rem; }
-        .byob-item .byob-price { font-weight: 700; color: var(--neon-blue); font-size: 1rem; }
+        .byob-row h4 { font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
+        .byob-items { display: flex; gap: 1.2rem; flex: 1; justify-content: center; }
+        .byob-item { text-align: center; }
+        .byob-item .drink { font-size: 0.65rem; color: var(--text-muted); }
+        .byob-item .byob-price { font-weight: 700; color: var(--neon-blue); font-size: 0.85rem; }
 
-        /* WHY US */
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        /* WHY US PANEL */
+        .section-title { text-align: center; margin-bottom: 1.5rem; }
+        .section-title .tag {
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px;
+            color: var(--neon-pink); font-weight: 600; margin-bottom: 0.3rem;
+        }
+        .section-title h2 { font-size: 1.8rem; font-weight: 800; }
+        .section-title p { color: var(--text-muted); font-size: 0.85rem; max-width: 500px; margin: 0.5rem auto 0; }
+
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
         .feature-card {
-            background: var(--card-bg); border-radius: 16px; padding: 2rem;
+            background: var(--card-bg); border-radius: 14px; padding: 1.2rem;
             border: 1px solid rgba(255,255,255,0.05); text-align: center;
-            transition: transform 0.3s;
         }
-        .feature-card:hover { transform: translateY(-3px); }
         .feature-icon {
-            width: 50px; height: 50px; border-radius: 12px; margin: 0 auto 1rem;
+            width: 40px; height: 40px; border-radius: 10px; margin: 0 auto 0.6rem;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; font-weight: 700;
+            font-size: 0.85rem; font-weight: 700;
         }
-        .feature-icon.icon-songs { background: rgba(255,45,120,0.1); color: var(--neon-pink); }
-        .feature-icon.icon-sound { background: rgba(0,212,255,0.1); color: var(--neon-blue); }
-        .feature-icon.icon-private { background: rgba(180,77,255,0.1); color: var(--neon-purple); }
-        .feature-icon.icon-party { background: rgba(255,45,120,0.1); color: var(--neon-pink); }
-        .feature-icon.icon-byob { background: rgba(0,212,255,0.1); color: var(--neon-blue); }
-        .feature-icon.icon-location { background: rgba(180,77,255,0.1); color: var(--neon-purple); }
-        .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .feature-card p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+        .fi-1 { background: rgba(255,45,120,0.1); color: var(--neon-pink); }
+        .fi-2 { background: rgba(0,212,255,0.1); color: var(--neon-blue); }
+        .fi-3 { background: rgba(180,77,255,0.1); color: var(--neon-purple); }
+        .feature-card h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+        .feature-card p { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; }
 
-        /* GALLERY PLACEHOLDER */
+        /* GALLERY PANEL */
         .gallery-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+            grid-template-rows: 1fr 1fr;
+            height: calc(100% - 1rem);
         }
-        .gallery-item {
-            height: 220px; border-radius: 16px; overflow: hidden;
-            position: relative; cursor: pointer;
-            transition: transform 0.3s;
+        .gallery-card {
+            border-radius: 16px; overflow: hidden; position: relative;
+            cursor: pointer; transition: transform 0.3s;
         }
-        .gallery-item:hover { transform: scale(1.02); }
-        .gallery-item:nth-child(1) { background: linear-gradient(135deg, #2d1b4e, #4e1b3e); }
-        .gallery-item:nth-child(2) { background: linear-gradient(135deg, #1b2d4e, #1b4e3e); }
-        .gallery-item:nth-child(3) { background: linear-gradient(135deg, #4e2d1b, #4e1b2d); }
-        .gallery-item .overlay {
-            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-            font-size: 0.85rem; color: var(--text-muted); opacity: 0.4;
-            text-transform: uppercase; letter-spacing: 3px; font-weight: 600;
+        .gallery-card:hover { transform: scale(1.02); }
+        .gallery-card img {
+            width: 100%; height: 100%; object-fit: cover;
+            position: absolute; inset: 0;
+        }
+        /* VIP Room - Blue fiber optic ceiling + SUMO sign */
+        .gc-1 .glow {
+            background:
+                radial-gradient(ellipse at 50% 20%, rgba(0,100,255,0.6) 0%, transparent 50%),
+                radial-gradient(ellipse at 30% 60%, rgba(180,0,255,0.3) 0%, transparent 40%),
+                radial-gradient(ellipse at 70% 80%, rgba(255,0,80,0.2) 0%, transparent 40%),
+                linear-gradient(180deg, #020825 0%, #0a0520 50%, #150a20 100%);
+        }
+        .gc-1::before {
+            content: ''; position: absolute; top: 0; left: 20%; right: 20%; height: 60%;
+            background: repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,150,255,0.15) 2px, rgba(0,150,255,0.15) 3px);
+            z-index: 1;
+        }
+        /* Karaoke screen room - lyrics on screen */
+        .gc-2 .glow {
+            background:
+                radial-gradient(ellipse at 40% 40%, rgba(255,0,100,0.4) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 70%, rgba(0,50,255,0.4) 0%, transparent 40%),
+                radial-gradient(ellipse at 80% 30%, rgba(200,0,255,0.2) 0%, transparent 30%),
+                linear-gradient(135deg, #0a0520 0%, #150a25 50%, #0a0a20 100%);
+        }
+        /* Laser room - red lasers + fog */
+        .gc-3 .glow {
+            background:
+                radial-gradient(ellipse at 50% 50%, rgba(0,200,255,0.3) 0%, transparent 30%),
+                radial-gradient(ellipse at 20% 30%, rgba(255,0,50,0.4) 0%, transparent 40%),
+                radial-gradient(ellipse at 80% 60%, rgba(255,0,80,0.3) 0%, transparent 40%),
+                linear-gradient(135deg, #0a0015 0%, #15050a 50%, #0a0520 100%);
+        }
+        .gc-3::before {
+            content: ''; position: absolute; top: 10%; left: 40%; width: 2px; height: 80%;
+            background: rgba(255,0,50,0.6); transform: rotate(25deg); z-index: 1;
+            box-shadow: 20px -10px 0 rgba(255,0,50,0.4), 40px -20px 0 rgba(255,0,50,0.3), -20px 10px 0 rgba(255,0,50,0.4);
+        }
+        /* Small blue room */
+        .gc-4 .glow {
+            background:
+                radial-gradient(ellipse at 60% 40%, rgba(0,100,255,0.5) 0%, transparent 50%),
+                radial-gradient(ellipse at 30% 70%, rgba(0,180,255,0.3) 0%, transparent 40%),
+                linear-gradient(135deg, #020a25 0%, #0a0525 50%, #050a20 100%);
+        }
+        /* Green neon room */
+        .gc-5 .glow {
+            background:
+                radial-gradient(ellipse at 50% 50%, rgba(0,255,100,0.3) 0%, transparent 40%),
+                radial-gradient(ellipse at 30% 30%, rgba(0,200,255,0.2) 0%, transparent 40%),
+                radial-gradient(ellipse at 70% 70%, rgba(0,255,150,0.2) 0%, transparent 30%),
+                linear-gradient(135deg, #020a08 0%, #051510 50%, #020a15 100%);
+        }
+        .gc-5::before {
+            content: ''; position: absolute; top: 20%; left: 10%; width: 2px; height: 60%;
+            background: rgba(0,255,100,0.4); z-index: 1;
+            box-shadow: 15px 0 0 rgba(0,255,100,0.3), 30px 0 0 rgba(0,255,100,0.2), 45px 0 0 rgba(0,255,100,0.15);
+        }
+        /* Party room - hearts */
+        .gc-6 .glow {
+            background:
+                radial-gradient(ellipse at 40% 30%, rgba(255,0,100,0.5) 0%, transparent 40%),
+                radial-gradient(ellipse at 70% 60%, rgba(200,0,255,0.3) 0%, transparent 40%),
+                radial-gradient(ellipse at 50% 80%, rgba(255,50,100,0.2) 0%, transparent 30%),
+                linear-gradient(135deg, #150510 0%, #0a0520 50%, #15050a 100%);
+        }
+        .gallery-label {
+            position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
+            padding: 1rem; background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        }
+        .gallery-label h4 { font-size: 0.9rem; font-weight: 700; }
+        .gallery-label p { font-size: 0.68rem; color: var(--text-muted); }
+        .gallery-note {
+            position: absolute; top: 0.6rem; right: 0.8rem; z-index: 2;
+            padding: 0.2rem 0.6rem; border-radius: 50px;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+            font-size: 0.6rem; color: var(--text-muted);
         }
 
-        /* HOURS & LOCATION */
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        /* HOURS PANEL */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
         .info-card {
-            background: var(--card-bg); border-radius: 20px; padding: 2.5rem;
+            background: var(--card-bg); border-radius: 16px; padding: 1.5rem;
             border: 1px solid rgba(255,255,255,0.05);
         }
-        .info-card h3 {
-            font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem;
-        }
-        .hours-table { width: 100%; }
+        .info-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
         .hours-row {
-            display: flex; justify-content: space-between; padding: 0.6rem 0;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-            font-size: 0.92rem;
+            display: flex; justify-content: space-between; padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.85rem;
         }
         .hours-row .day { color: var(--text-muted); }
         .hours-row .time { font-weight: 500; }
         .location-details p {
-            font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0.8rem;
-            line-height: 1.6;
+            font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.6rem; line-height: 1.5;
         }
         .location-details .label {
-            color: var(--text); font-weight: 600; font-size: 0.8rem;
-            text-transform: uppercase; letter-spacing: 1px; display: block;
-            margin-bottom: 0.2rem;
+            color: var(--text); font-weight: 600; font-size: 0.7rem;
+            text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 0.15rem;
         }
-        .map-placeholder {
-            width: 100%; height: 200px; border-radius: 12px; margin-top: 1.5rem;
-            background: linear-gradient(135deg, #1a1a3e, #2d1b4e);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.9rem; color: var(--text-muted); cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: border-color 0.3s;
-        }
-        .map-placeholder:hover { border-color: var(--neon-pink); }
 
-        /* CTA SECTION */
-        .cta-section {
-            text-align: center;
-            background: linear-gradient(135deg, rgba(255,45,120,0.1), rgba(180,77,255,0.1));
-            border-radius: 30px; margin: 0 2rem; padding: 5rem 2rem;
+        /* BOOK NOW PANEL */
+        .cta-panel {
+            align-items: center; justify-content: center;
+            text-align: center; height: 100%;
+            background: linear-gradient(135deg, rgba(255,45,120,0.08), rgba(180,77,255,0.08));
         }
-        .cta-section h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 1rem; }
-        .cta-section p { color: var(--text-muted); max-width: 500px; margin: 0 auto 2rem; line-height: 1.7; }
+        .cta-panel.active { display: flex; }
+        .cta-content h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; margin-bottom: 0.5rem; }
+        .cta-content p { color: var(--text-muted); max-width: 450px; margin: 0 auto 1.5rem; line-height: 1.6; font-size: 0.95rem; }
         .cta-phone {
-            font-size: 1.8rem; font-weight: 800; color: var(--neon-pink);
-            text-decoration: none; display: inline-block; margin-top: 1rem;
+            font-size: 2rem; font-weight: 800; color: var(--neon-pink);
+            text-decoration: none; display: block; margin-top: 1rem;
         }
-        .cta-phone:hover { opacity: 0.8; }
 
         /* FOOTER */
-        footer {
-            text-align: center; padding: 3rem 2rem; margin-top: 4rem;
+        .footer {
+            text-align: center; padding: 0.5rem; flex-shrink: 0;
             border-top: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.65rem; color: rgba(255,255,255,0.2);
         }
-        .footer-logo { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        footer p { color: var(--text-muted); font-size: 0.8rem; }
-        .social-links { display: flex; gap: 1rem; justify-content: center; margin: 1.5rem 0; }
-        .social-links a {
-            padding: 0.4rem 1rem; border-radius: 50px;
-            background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;
-            color: var(--text-muted); text-decoration: none; font-size: 0.75rem;
-            font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
-            transition: all 0.3s;
-        }
-        .social-links a:hover { background: var(--neon-pink); color: #fff; }
 
         /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .nav-links { display: none; }
-            .mobile-toggle { display: block; }
-            .nav-links.open {
-                display: flex; flex-direction: column; position: absolute;
-                top: 70px; left: 0; right: 0; background: rgba(10,10,20,0.97);
-                padding: 2rem; gap: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05);
-            }
-            .section-bar { display: none; }
+        @media (max-width: 900px) {
+            .rooms-grid { grid-template-columns: repeat(2, 1fr); }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
             .info-grid { grid-template-columns: 1fr; }
-            section { padding: 4rem 1.5rem; }
+            .panel { overflow-y: auto; }
+        }
+        @media (max-width: 600px) {
+            .rooms-grid { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr; }
+            .tabs { flex-wrap: wrap; }
+            body { height: auto; overflow: auto; }
         }
     </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
+<div class="nav">
     <div class="logo">SUMO KARAOKE <span>Cypress, TX</span></div>
-    <ul class="nav-links" id="navLinks">
-        <li><a href="#rooms">Rooms</a></li>
-        <li><a href="#why">Why Us</a></li>
-        <li><a href="#hours">Hours</a></li>
-        <li><a href="booking.html" class="nav-cta">Book Now</a></li>
-    </ul>
-    <button class="mobile-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">&#9776;</button>
-</nav>
-
-<!-- SECTION BAR -->
-<div class="section-bar">
-    <a href="#hero" class="active">Home</a>
-    <a href="#rooms">Rooms & Pricing</a>
-    <a href="#why">Why Us</a>
-    <a href="#gallery">Gallery</a>
-    <a href="#hours">Hours</a>
-    <a href="#contact">Book Now</a>
+    <a href="booking.html" class="book-btn">Book Now</a>
 </div>
 
-<!-- HERO -->
-<section class="hero" id="hero">
-    <div class="hero-content">
-        <div class="hero-badge">Now Open in Cypress</div>
-        <h1>Sing Your Heart Out at <span class="gradient">Sumo Karaoke</span></h1>
-        <p>Cypress's newest private karaoke experience. Four premium rooms, thousands of songs, and a vibe you won't forget. Bring your crew.</p>
-        <div class="hero-buttons">
-            <a href="booking.html" class="btn btn-primary">Book a Room</a>
-            <a href="#rooms" class="btn btn-outline">See Our Rooms</a>
+<!-- TABS -->
+<div class="tabs">
+    <button class="tab active" onclick="showPanel('home')">Home</button>
+    <button class="tab" onclick="showPanel('rooms')">Rooms & Pricing</button>
+    <button class="tab" onclick="showPanel('why')">Why Us</button>
+    <button class="tab" onclick="showPanel('gallery')">Gallery</button>
+    <button class="tab" onclick="showPanel('hours')">Hours & Location</button>
+    <button class="tab" onclick="showPanel('book')">Book Now</button>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+    <!-- HOME -->
+    <div class="panel home-panel active" id="panel-home">
+        <div class="home-content">
+            <div class="hero-badge">Now Open in Cypress</div>
+            <h1>Sing Your Heart Out at <span class="gradient">Sumo Karaoke</span></h1>
+            <p>Cypress's newest private karaoke experience. Four premium rooms, thousands of songs, and a vibe you won't forget. Bring your crew.</p>
+            <div class="home-buttons">
+                <a href="booking.html" class="btn btn-primary">Book a Room</a>
+                <button class="btn btn-outline" onclick="showPanel('rooms')">See Our Rooms</button>
+            </div>
         </div>
     </div>
-</section>
 
-<!-- ROOMS -->
-<section id="rooms">
-    <div class="container">
-        <div class="section-header">
-            <div class="tag">Our Rooms</div>
-            <h2>Pick Your Stage</h2>
-            <p>From cozy duets to full-on VIP parties, we have a room for every crew size and every occasion.</p>
-        </div>
-        <div class="rooms-grid">
-
-            <div class="room-card">
-                <div class="room-img room-img-small">
-                    <div class="room-label">Small</div>
-                </div>
-                <div class="room-info">
+    <!-- ROOMS -->
+    <div class="panel" id="panel-rooms">
+        <div class="container">
+            <div class="rooms-grid">
+                <div class="room-card">
                     <h3>Small Room 1</h3>
                     <div class="capacity">Up to 8 guests</div>
                     <ul class="room-features">
                         <li>Perfect for date nights & small groups</li>
                         <li>Premium sound system</li>
                         <li>Touch-screen song selection</li>
-                        <li>Cozy seating & mood lighting</li>
                     </ul>
                     <div class="room-pricing">
                         <div class="price-row">
@@ -409,21 +396,14 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="room-card">
-                <div class="room-img room-img-small">
-                    <div class="room-label">Small</div>
-                    <span class="room-badge badge-popular">Popular</span>
-                </div>
-                <div class="room-info">
-                    <h3>Small Room 2</h3>
+                <div class="room-card">
+                    <h3>Small Room 2 <span class="room-badge badge-popular">Popular</span></h3>
                     <div class="capacity">Up to 8 guests</div>
                     <ul class="room-features">
                         <li>Great for friends & after-work hangs</li>
                         <li>Premium sound system</li>
                         <li>Touch-screen song selection</li>
-                        <li>Cozy seating & mood lighting</li>
                     </ul>
                     <div class="room-pricing">
                         <div class="price-row">
@@ -436,20 +416,14 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="room-card">
-                <div class="room-img room-img-medium">
-                    <div class="room-label">Medium</div>
-                </div>
-                <div class="room-info">
+                <div class="room-card">
                     <h3>Medium Room</h3>
                     <div class="capacity">Up to 15 guests</div>
                     <ul class="room-features">
                         <li>Birthday parties & team events</li>
                         <li>Upgraded sound & dual screens</li>
                         <li>Spacious dance area</li>
-                        <li>Disco lighting effects</li>
                     </ul>
                     <div class="room-pricing">
                         <div class="price-row">
@@ -462,21 +436,14 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="room-card">
-                <div class="room-img room-img-vip">
-                    <div class="room-label">VIP</div>
-                    <span class="room-badge badge-vip">VIP</span>
-                </div>
-                <div class="room-info">
-                    <h3>VIP Large</h3>
+                <div class="room-card">
+                    <h3>VIP Large <span class="room-badge badge-vip">VIP</span></h3>
                     <div class="capacity">Up to 25 guests</div>
                     <ul class="room-features">
                         <li>The ultimate karaoke experience</li>
                         <li>Professional-grade audio & visuals</li>
                         <li>Luxury seating & private bar area</li>
-                        <li>LED stage lighting & fog machine</li>
                     </ul>
                     <div class="room-pricing">
                         <div class="price-row">
@@ -491,115 +458,125 @@
                 </div>
             </div>
 
-        </div>
+            <div class="notes-row">
+                <span class="pricing-note">20% Gratuity Added</span>
+                <span class="pricing-note">Minimum 2 Hours</span>
+            </div>
 
-        <div class="pricing-notes">
-            <span class="pricing-note">20% Gratuity Added</span>
-            <span class="pricing-note">Minimum 2 Hours</span>
-        </div>
-
-        <!-- BYOB -->
-        <div class="byob-banner">
-            <h3>BYOB Friendly</h3>
-            <div class="subtitle">Bring your own drinks - here's the corkage pricing</div>
-            <div class="byob-grid">
-                <div class="byob-item">
-                    <div class="drink">Beer</div>
-                    <div class="byob-price">$1/bottle</div>
-                </div>
-                <div class="byob-item">
-                    <div class="drink">Wine</div>
-                    <div class="byob-price">$20/bottle</div>
-                </div>
-                <div class="byob-item">
-                    <div class="drink">Liquor</div>
-                    <div class="byob-price">$50</div>
-                </div>
-                <div class="byob-item">
-                    <div class="drink">Liquor 1L</div>
-                    <div class="byob-price">$65</div>
-                </div>
-                <div class="byob-item">
-                    <div class="drink">Liquor 1.75L</div>
-                    <div class="byob-price">$100</div>
+            <div class="byob-row">
+                <h4>BYOB Prices</h4>
+                <div class="byob-items">
+                    <div class="byob-item"><div class="drink">Beer</div><div class="byob-price">$1/bottle</div></div>
+                    <div class="byob-item"><div class="drink">Wine</div><div class="byob-price">$20/bottle</div></div>
+                    <div class="byob-item"><div class="drink">Liquor</div><div class="byob-price">$50</div></div>
+                    <div class="byob-item"><div class="drink">Liquor 1L</div><div class="byob-price">$65</div></div>
+                    <div class="byob-item"><div class="drink">Liquor 1.75L</div><div class="byob-price">$100</div></div>
                 </div>
             </div>
         </div>
     </div>
-</section>
 
-<!-- WHY US -->
-<section id="why" style="background: rgba(255,255,255,0.01);">
-    <div class="container">
-        <div class="section-header">
-            <div class="tag">Why Sumo Karaoke</div>
-            <h2>Not Your Average Karaoke</h2>
-            <p>We built this place for people who actually want to have fun - no judgment, just good vibes.</p>
-        </div>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon icon-songs">01</div>
-                <h3>50,000+ Songs</h3>
-                <p>English, Spanish, Korean, Vietnamese, Chinese, Tagalog and more. Updated weekly with the latest hits.</p>
+    <!-- WHY US -->
+    <div class="panel" id="panel-why">
+        <div class="container">
+            <div class="section-title">
+                <div class="tag">Why Sumo Karaoke</div>
+                <h2>Not Your Average Karaoke</h2>
+                <p>We built this place for people who actually want to have fun - no judgment, just good vibes.</p>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon icon-sound">02</div>
-                <h3>Pro Sound Systems</h3>
-                <p>Crystal-clear audio with wireless mics so you sound like a star (or at least think you do).</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon icon-private">03</div>
-                <h3>100% Private</h3>
-                <p>Your own room, your own rules. No strangers watching. Belt it out without worrying about a thing.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon icon-party">04</div>
-                <h3>Party Packages</h3>
-                <p>Birthdays, bachelorettes, corporate events - we'll help you throw a party they'll talk about.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon icon-byob">05</div>
-                <h3>BYOB Friendly</h3>
-                <p>Bring your own drinks and snacks. We provide the cups, ice, and a great time.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon icon-location">06</div>
-                <h3>Easy to Find</h3>
-                <p>Located right in the heart of Cypress with plenty of free parking. Walk right in.</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon fi-1">01</div>
+                    <h3>50,000+ Songs</h3>
+                    <p>English, Spanish, Korean, Vietnamese, Chinese, Tagalog and more. Updated weekly with the latest hits.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon fi-2">02</div>
+                    <h3>Pro Sound Systems</h3>
+                    <p>Crystal-clear audio with wireless mics so you sound like a star (or at least think you do).</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon fi-3">03</div>
+                    <h3>100% Private</h3>
+                    <p>Your own room, your own rules. No strangers watching. Belt it out without worrying about a thing.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon fi-1">04</div>
+                    <h3>Party Packages</h3>
+                    <p>Birthdays, bachelorettes, corporate events - we'll help you throw a party they'll talk about.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon fi-2">05</div>
+                    <h3>BYOB Friendly</h3>
+                    <p>Bring your own drinks and snacks. We provide the cups, ice, and a great time.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon fi-3">06</div>
+                    <h3>Easy to Find</h3>
+                    <p>Located right in the heart of Cypress with plenty of free parking. Walk right in.</p>
+                </div>
             </div>
         </div>
     </div>
-</section>
 
-<!-- GALLERY -->
-<section id="gallery">
-    <div class="container">
-        <div class="section-header">
-            <div class="tag">The Vibe</div>
-            <h2>See What's Waiting</h2>
+    <!-- GALLERY -->
+    <div class="panel" id="panel-gallery">
+        <div class="container" style="height:100%;">
+            <div class="gallery-grid">
+                <div class="gallery-card">
+                    <img src="vip-room.png" alt="VIP Room">
+                    <div class="gallery-note">VIP Room</div>
+                    <div class="gallery-label">
+                        <h4>VIP Large Suite</h4>
+                        <p>SUMO neon sign, LED ceiling, premium lighting</p>
+                    </div>
+                </div>
+                <div class="gallery-card">
+                    <img src="laser-room.png" alt="Laser Room">
+                    <div class="gallery-note">Lasers</div>
+                    <div class="gallery-label">
+                        <h4>Laser Light Show</h4>
+                        <p>Red lasers, fog machine, heart projections</p>
+                    </div>
+                </div>
+                <div class="gallery-card">
+                    <img src="blue-room.png" alt="Blue Room">
+                    <div class="gallery-note">Small Room</div>
+                    <div class="gallery-label">
+                        <h4>Intimate Blue Room</h4>
+                        <p>Neon-lit screen, cozy private atmosphere</p>
+                    </div>
+                </div>
+                <div class="gallery-card">
+                    <img src="green-room1.png" alt="Green Room">
+                    <div class="gallery-note">Medium Room</div>
+                    <div class="gallery-label">
+                        <h4>Green Neon Lounge</h4>
+                        <p>LED rain effect, luxury seating, spacious layout</p>
+                    </div>
+                </div>
+                <div class="gallery-card">
+                    <img src="green-room2.png" alt="Green Room 2">
+                    <div class="gallery-note">Lounge</div>
+                    <div class="gallery-label">
+                        <h4>Premium Lounge</h4>
+                        <p>Marble floors, cushioned walls, blue projections</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="gallery-grid">
-            <div class="gallery-item"><div class="overlay">Photo 1</div></div>
-            <div class="gallery-item"><div class="overlay">Photo 2</div></div>
-            <div class="gallery-item"><div class="overlay">Photo 3</div></div>
-        </div>
-        <p style="text-align:center; color: var(--text-muted); margin-top: 1.5rem; font-size: 0.85rem;">
-            <em>Your photos will go here</em>
-        </p>
     </div>
-</section>
 
-<!-- HOURS & LOCATION -->
-<section id="hours">
-    <div class="container">
-        <div class="section-header">
-            <div class="tag">Visit Us</div>
-            <h2>Hours & Location</h2>
-        </div>
-        <div class="info-grid">
-            <div class="info-card">
-                <h3>Hours</h3>
-                <div class="hours-table">
+    <!-- HOURS -->
+    <div class="panel" id="panel-hours">
+        <div class="container">
+            <div class="section-title">
+                <div class="tag">Visit Us</div>
+                <h2>Hours & Location</h2>
+            </div>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>Hours</h3>
                     <div class="hours-row"><span class="day">Monday</span><span class="time">5:00 PM - 12:00 AM</span></div>
                     <div class="hours-row"><span class="day">Tuesday</span><span class="time">5:00 PM - 12:00 AM</span></div>
                     <div class="hours-row"><span class="day">Wednesday</span><span class="time">5:00 PM - 12:00 AM</span></div>
@@ -607,67 +584,51 @@
                     <div class="hours-row"><span class="day">Friday</span><span class="time">4:00 PM - 2:00 AM</span></div>
                     <div class="hours-row"><span class="day">Saturday</span><span class="time">2:00 PM - 2:00 AM</span></div>
                     <div class="hours-row"><span class="day">Sunday</span><span class="time">2:00 PM - 12:00 AM</span></div>
+                    <p style="color: var(--text-muted); font-size: 0.7rem; margin-top: 0.8rem; font-style: italic;">* Hours are placeholder - update with actual hours</p>
                 </div>
-                <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 1rem; font-style: italic;">
-                    * Hours are placeholder - update with actual hours
-                </p>
-            </div>
-            <div class="info-card">
-                <h3>Location</h3>
-                <div class="location-details">
-                    <p><span class="label">Address</span>Cypress, Houston, TX</p>
-                    <p><span class="label">Phone</span>(281) 000-0000</p>
-                    <p><span class="label">Email</span>info@sumokaraoke.com</p>
-                </div>
-                <div class="map-placeholder" onclick="window.open('https://maps.google.com/?q=Cypress+TX','_blank')">
-                    Click to open in Google Maps
+                <div class="info-card">
+                    <h3>Location</h3>
+                    <div class="location-details">
+                        <p><span class="label">Address</span>Cypress, Houston, TX</p>
+                        <p><span class="label">Phone</span>(281) 000-0000</p>
+                        <p><span class="label">Email</span>info@sumokaraoke.com</p>
+                    </div>
+                    <div style="display:flex;gap:0.8rem;margin-top:1rem;">
+                        <a href="#" style="padding:0.4rem 1rem;border-radius:50px;background:rgba(255,255,255,0.05);color:var(--text-muted);text-decoration:none;font-size:0.7rem;font-weight:600;letter-spacing:1px;">Instagram</a>
+                        <a href="#" style="padding:0.4rem 1rem;border-radius:50px;background:rgba(255,255,255,0.05);color:var(--text-muted);text-decoration:none;font-size:0.7rem;font-weight:600;letter-spacing:1px;">TikTok</a>
+                        <a href="#" style="padding:0.4rem 1rem;border-radius:50px;background:rgba(255,255,255,0.05);color:var(--text-muted);text-decoration:none;font-size:0.7rem;font-weight:600;letter-spacing:1px;">Facebook</a>
+                        <a href="#" style="padding:0.4rem 1rem;border-radius:50px;background:rgba(255,255,255,0.05);color:var(--text-muted);text-decoration:none;font-size:0.7rem;font-weight:600;letter-spacing:1px;">Yelp</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</section>
 
-<!-- CTA -->
-<section id="contact">
-    <div class="cta-section">
-        <h2>Ready to Sing?</h2>
-        <p>Book your room now - walk-ins welcome but reservations guarantee your spot, especially on weekends.</p>
-        <div class="hero-buttons" style="margin-bottom: 1rem;">
-            <a href="tel:+12810000000" class="btn btn-primary">Call to Book</a>
-            <a href="#rooms" class="btn btn-outline">See Rooms & Pricing</a>
+    <!-- BOOK NOW -->
+    <div class="panel cta-panel" id="panel-book">
+        <div class="cta-content">
+            <h2>Ready to Sing?</h2>
+            <p>Book your room now - walk-ins welcome but reservations guarantee your spot, especially on weekends.</p>
+            <div class="home-buttons">
+                <a href="booking.html" class="btn btn-primary">Book Online</a>
+                <a href="tel:+12810000000" class="btn btn-outline">Call to Book</a>
+            </div>
+            <a href="tel:+12810000000" class="cta-phone">(281) 000-0000</a>
         </div>
-        <a href="tel:+12810000000" class="cta-phone">(281) 000-0000</a>
     </div>
-</section>
+
+</div>
 
 <!-- FOOTER -->
-<footer>
-    <div class="footer-logo">SUMO KARAOKE</div>
-    <div class="social-links">
-        <a href="#">Instagram</a>
-        <a href="#">TikTok</a>
-        <a href="#">Facebook</a>
-        <a href="#">Yelp</a>
-    </div>
-    <p>&copy; 2026 Sumo Karaoke. All rights reserved. | Cypress, TX</p>
-</footer>
+<div class="footer">&copy; 2026 Sumo Karaoke. All rights reserved. | Cypress, TX</div>
 
 <script>
-// Highlight active section in the bar
-const sections = document.querySelectorAll('section[id]');
-const barLinks = document.querySelectorAll('.section-bar a');
-
-window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(section => {
-        const top = section.offsetTop - 150;
-        if (window.scrollY >= top) current = section.getAttribute('id');
-    });
-    barLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === '#' + current) link.classList.add('active');
-    });
-});
+function showPanel(name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    event.target.classList.add('active');
+}
 </script>
 </body>
 </html>
