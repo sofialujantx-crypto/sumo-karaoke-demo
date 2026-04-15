@@ -3,163 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Summary</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>Sofia's Summary for Today</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Poppins', sans-serif;
-            background: #0a0a14;
+            background: #fdf5f0;
             display: flex; align-items: center; justify-content: center;
             min-height: 100vh; padding: 2rem;
+            color: #4a3728;
         }
         .card {
-            background: linear-gradient(135deg, #12121f, #1a1a2e);
-            border-radius: 24px; padding: 2.5rem;
-            max-width: 520px; width: 100%;
-            border: 1px solid rgba(255,255,255,0.06);
-            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            background: #fdf5f0;
+            max-width: 580px; width: 100%;
+            padding: 2.5rem;
         }
-        .header {
-            text-align: center; margin-bottom: 1.8rem;
-            padding-bottom: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.06);
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem; font-weight: 700; color: #3a2a1a;
+            margin-bottom: 0.2rem;
         }
         .date {
-            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px;
-            color: #9999aa; margin-bottom: 0.5rem;
+            font-size: 0.78rem; text-transform: uppercase; letter-spacing: 2px;
+            color: #9a8070; margin-bottom: 1.5rem;
         }
-        .title { font-size: 1.6rem; font-weight: 800; color: #f0f0f5; margin-bottom: 0.3rem; }
-        .subtitle { font-size: 0.85rem; color: #ff2d78; font-weight: 600; }
-
-        .client-box {
-            background: rgba(255,255,255,0.03); border-radius: 14px;
-            padding: 1rem; margin-bottom: 1.5rem; text-align: center;
+        .divider {
+            border: none; border-top: 1px solid #e0cfc0; margin: 1.5rem 0;
         }
-        .client-label {
-            font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px;
-            color: #9999aa; margin-bottom: 0.3rem;
-        }
-        .client-name { font-size: 1.3rem; font-weight: 800; color: #f0f0f5; }
-        .client-location { font-size: 0.8rem; color: #9999aa; }
-
         .section-label {
-            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px;
-            color: #ff2d78; font-weight: 600; margin-bottom: 0.8rem;
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px;
+            color: #b08060; font-weight: 600; margin-bottom: 1.2rem;
         }
-        .deliverables { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
-        .item {
+        .checklist { list-style: none; margin-bottom: 1rem; }
+        .checklist li {
             display: flex; align-items: flex-start; gap: 0.8rem;
-            background: rgba(255,255,255,0.03); border-radius: 10px; padding: 0.7rem 1rem;
+            padding: 0.5rem 0; font-size: 0.92rem; line-height: 1.5;
+            color: #5a4535;
         }
-        .item-num {
-            width: 28px; height: 28px; border-radius: 8px;
+        .check {
+            width: 22px; height: 22px; border-radius: 4px;
+            background: #c8a08a; flex-shrink: 0; margin-top: 0.1rem;
             display: flex; align-items: center; justify-content: center;
-            font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
         }
-        .num-1 { background: rgba(255,45,120,0.15); color: #ff2d78; }
-        .num-2 { background: rgba(0,212,255,0.15); color: #00d4ff; }
-        .num-3 { background: rgba(180,77,255,0.15); color: #b44dff; }
-        .item-text h4 { font-size: 0.85rem; font-weight: 700; color: #f0f0f5; }
-        .item-text p { font-size: 0.7rem; color: #9999aa; line-height: 1.4; margin-top: 0.1rem; }
+        .check::after {
+            content: '\2713'; color: #fff; font-size: 0.75rem; font-weight: 700;
+        }
+        .checklist li strong { color: #3a2a1a; }
 
-        .pricing-box {
-            background: rgba(255,45,120,0.06); border: 1px solid rgba(255,45,120,0.15);
-            border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1.5rem;
+        .projects { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem; }
+        .project {
+            background: #fff; border-radius: 12px; padding: 1.1rem 1.3rem;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
-        .pricing-row {
-            display: flex; justify-content: space-between; align-items: center; padding: 0.35rem 0;
+        .project-name { font-size: 0.92rem; font-weight: 600; color: #3a2a1a; }
+        .project-right { display: flex; align-items: center; gap: 0.6rem; }
+        .project-pct { font-size: 0.85rem; font-weight: 700; color: #5a4535; }
+        .progress-bar {
+            width: 80px; height: 4px; background: #e8ddd5; border-radius: 4px; overflow: hidden;
         }
-        .pricing-row .label { font-size: 0.82rem; color: #9999aa; }
-        .pricing-row .value { font-size: 1rem; font-weight: 800; color: #ff2d78; }
-        .pricing-row .value.blue { color: #00d4ff; }
-        .pricing-divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 0.4rem 0; }
+        .progress-fill { height: 100%; border-radius: 4px; background: #c8a08a; }
 
-        .cta-box {
-            text-align: center; padding-top: 1.2rem;
-            border-top: 1px solid rgba(255,255,255,0.06);
+        .skills-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .skill-tag {
+            padding: 0.35rem 0.9rem; border-radius: 6px;
+            border: 1px solid #d8c8b8; background: transparent;
+            font-size: 0.78rem; color: #5a4535; font-weight: 500;
         }
-        .status-badge {
-            display: inline-block; padding: 0.35rem 1rem; border-radius: 50px;
-            background: rgba(0,200,83,0.1); border: 1px solid rgba(0,200,83,0.25);
-            font-size: 0.72rem; font-weight: 600; color: #00c853;
-            text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;
-        }
+
+        .cta-section { text-align: center; margin-top: 0.5rem; }
         .cta-link {
             display: inline-block; padding: 0.7rem 2rem; border-radius: 50px;
-            background: linear-gradient(135deg, #ff2d78, #b44dff);
-            color: #fff; text-decoration: none; font-weight: 700; font-size: 0.85rem;
-            box-shadow: 0 4px 20px rgba(255,45,120,0.3);
-            transition: transform 0.3s;
+            background: #c8a08a; color: #fff; text-decoration: none;
+            font-weight: 600; font-size: 0.85rem; transition: background 0.3s;
         }
-        .cta-link:hover { transform: translateY(-2px); }
-        .next-step {
-            font-size: 0.75rem; color: #9999aa; margin-top: 0.8rem; line-height: 1.5;
-        }
+        .cta-link:hover { background: #b08060; }
+
         .watermark {
-            text-align: center; margin-top: 1.2rem;
-            font-size: 0.6rem; color: rgba(255,255,255,0.1);
-            letter-spacing: 2px; text-transform: uppercase;
+            text-align: center; margin-top: 1.5rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem; color: #b08060; font-style: italic;
         }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <div class="header">
-        <div class="date">April 15, 2026</div>
-        <div class="title">Today's Progress</div>
-        <div class="subtitle">Web Design Project</div>
-    </div>
+    <div class="title">Sofia's Summary for Today</div>
+    <div class="date">April 15, 2026</div>
 
-    <div class="client-box">
-        <div class="client-label">Client</div>
-        <div class="client-name">Sumo Karaoke</div>
-        <div class="client-location">Cypress, Houston TX</div>
-    </div>
+    <hr class="divider">
 
-    <div class="section-label">What I Built</div>
-    <div class="deliverables">
-        <div class="item">
-            <div class="item-num num-1">01</div>
-            <div class="item-text">
-                <h4>Full Homepage</h4>
-                <p>4 rooms with real pricing, BYOB prices, why us section, hours, and navigation tabs</p>
+    <div class="section-label">What I Accomplished</div>
+    <ul class="checklist">
+        <li><span class="check"></span>Built a <strong>full website</strong> for Sumo Karaoke in Cypress, TX</li>
+        <li><span class="check"></span>Created an <strong>online booking page</strong> with live price calculator</li>
+        <li><span class="check"></span>Added a <strong>photo gallery</strong> with real room photos</li>
+        <li><span class="check"></span>Deployed it <strong>live on GitHub Pages</strong> with a shareable link</li>
+        <li><span class="check"></span>Did the research and <strong>pricing strategy</strong> myself!</li>
+    </ul>
+
+    <hr class="divider">
+
+    <div class="section-label">My Projects</div>
+    <div class="projects">
+        <div class="project">
+            <span class="project-name">BJJ Journey</span>
+            <div class="project-right">
+                <div class="progress-bar"><div class="progress-fill" style="width:95%"></div></div>
+                <span class="project-pct">95%</span>
             </div>
         </div>
-        <div class="item">
-            <div class="item-num num-2">02</div>
-            <div class="item-text">
-                <h4>Online Booking Page</h4>
-                <p>Room selector, date/time picker, live price calculator with gratuity, and confirmation</p>
+        <div class="project">
+            <span class="project-name">Olivia's Coffee Shop</span>
+            <div class="project-right">
+                <div class="progress-bar"><div class="progress-fill" style="width:90%"></div></div>
+                <span class="project-pct">90%</span>
             </div>
         </div>
-        <div class="item">
-            <div class="item-num num-3">03</div>
-            <div class="item-text">
-                <h4>Photo Gallery</h4>
-                <p>Real room photos showcasing VIP suite, laser room, blue room, and green neon lounge</p>
+        <div class="project">
+            <span class="project-name">Sofia Website</span>
+            <div class="project-right">
+                <div class="progress-bar"><div class="progress-fill" style="width:80%"></div></div>
+                <span class="project-pct">80%</span>
+            </div>
+        </div>
+        <div class="project">
+            <span class="project-name">Sumo Karaoke</span>
+            <div class="project-right">
+                <div class="progress-bar"><div class="progress-fill" style="width:75%"></div></div>
+                <span class="project-pct">75%</span>
             </div>
         </div>
     </div>
 
-    <div class="section-label">Proposed Pricing</div>
-    <div class="pricing-box">
-        <div class="pricing-row">
-            <span class="label">Website Build</span>
-            <span class="value">$1,200</span>
-        </div>
-        <hr class="pricing-divider">
-        <div class="pricing-row">
-            <span class="label">Monthly Maintenance</span>
-            <span class="value blue">$75/mo</span>
-        </div>
+    <div class="section-label">Skills I'm Learning</div>
+    <div class="skills-tags">
+        <span class="skill-tag">HTML</span>
+        <span class="skill-tag">CSS</span>
+        <span class="skill-tag">JavaScript</span>
+        <span class="skill-tag">Web Design</span>
+        <span class="skill-tag">GitHub Pages</span>
     </div>
 
-    <div class="cta-box">
-        <div class="status-badge">Demo Ready</div>
-        <br>
+    <hr class="divider">
+
+    <div class="cta-section">
         <a href="https://sofialujantx-crypto.github.io/sumo-karaoke-demo/" class="cta-link">Check Out the Website</a>
-        <p class="next-step">Next step: Reach out to the business and show them the demo</p>
     </div>
 
     <div class="watermark">Sofia Lujan</div>
